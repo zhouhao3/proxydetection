@@ -84,22 +84,25 @@ func mergeURL(a []string) (ret []string) {
 	for i := 0; i < len(a)-1; i++ {
 		t := strings.SplitAfterN(a[i], ".", 2)
 		s := []rune(t[0])
-		s1 := s[:len(s)-2]
-		contain = false
-		for j := i + 1; j < len(a)-1; j++ {
-			if strings.HasSuffix(a[j], t[1]) {
-				if strings.HasPrefix(a[j], string(s1)) {
-					a = append(a[:j], a[j+1:]...)
-					j = j - 1
-					contain = true
+		if len(s) > 1 {
+			s1 := s[:len(s)-2]
+			contain = false
+			for j := i + 1; j < len(a)-1; j++ {
+				if strings.HasSuffix(a[j], t[1]) {
+					if strings.HasPrefix(a[j], string(s1)) {
+						a = append(a[:j], a[j+1:]...)
+						j = j - 1
+						contain = true
+					}
 				}
 			}
+			if contain {
+				s[len(s)-2] = '*'
+				t[0] = string(s)
+			}
+			a[i] = t[0] + t[1]
 		}
-		if contain {
-			s[len(s)-2] = '*'
-			t[0] = string(s)
-		}
-		a[i] = t[0] + t[1]
+
 		ret = append(ret, a[i])
 	}
 
